@@ -1,47 +1,20 @@
 package com.antonkirvel.maze.model;
 
-public class Maze {
+import com.antonkirvel.maze.draw.CellDrawer;
 
-    // ! Martrix's row index represent X coordinate and column index represent Y coordinate
-    private Cell[][] cells;
-    private int startX;
-    private int startY;
+import java.awt.*;
+import java.util.Iterator;
 
-    // Create new maze with all bordered cells and with 1 entrance
-    public Maze(int width, int height, int startX, int startY, DIRECTION entrance) {
-        cells = new Cell[width][height];
-        if (startX != 0 && startY != 0) {
-            throw new IllegalArgumentException("We always have entrance on top or left side of the maze");
-        }
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                cells[i][j] = Cell.of(i, j).withBorder(DIRECTION.UP, DIRECTION.DOWN, DIRECTION.LEFT, DIRECTION.RIGHT);
-            }
-        }
-        cells[startX][startY].removeBorder(entrance);
-        this.startX = startX;
-        this.startY = startY;
-    }
+public interface Maze extends Iterable<Cell>{
+    Cell getStartingCell();
 
-    public int getWidth() {
-        return cells.length;
-    }
+    Cell getAnyIsolatedCellAdjacentToPath();
 
-    public int getHeight() {
-        return cells[0].length;
-    }
+    Iterator<Cell> iterator();
 
-    public Cell getCell(int x, int y) {
-        if (x < 0 || x >= cells.length) {
-            throw new IllegalArgumentException("Horizontal index is out of maze bounds");
-        }
-        if (y < 0 || y >= cells[0].length) {
-            throw new IllegalArgumentException("Vertical index is out of maze bounds");
-        }
-        return cells[x][y];
-    }
+    CellDrawer getCellDrawer(Graphics graphics, int baseX, int baseY, int cellSize);
 
-    public Cell getStartingCell() {
-        return cells[startX][startY];
-    }
+    int getPhysicalWidth(int cellSize);
+
+    int getPhysicalHeight(int cellSize);
 }
